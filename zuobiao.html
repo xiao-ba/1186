@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>变压器热点温度反演</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        .container {
+            width: 95%;
+            height: 95%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .title {
+            text-align: center;
+            margin: 0;
+            padding-bottom: 20px;
+            font-size: 24px;
+        }
+        .content {
+            display: flex;
+            flex: 1;
+        }
+        .form-section {
+            width: 35%; /* 增加宽度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #e0e0e0; /* 颜色1 */
+            border-radius: 8px;
+            margin-right: 20px; /* 增加灰色底色在白色底色内部 */
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex; /* 将标签和输入框放在同一行 */
+            align-items: center;
+        }
+        .form-group label {
+            display: block;
+            margin-right: 10px; /* 增加标签和输入框之间的距离 */
+        }
+        .form-group input {
+            width: 250px; /* 增加输入框宽度 */
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .form-group span {
+            font-size: 14px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 5px; /* 调整为紧挨输入框 */
+        }
+        /* 表面温度输入部分 */
+        .inline-group-container {
+            background-color: #f7f7f7; /* 颜色2 */
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 40px; /* 增加底部外边距 */
+            margin-top: 15px; /* 向上移一些 */
+        }
+        /* 电流输入部分 */
+        .single-group-container {
+            background-color: #f7f7f7; /* 颜色2 */
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 50px; /* 增加底部外边距 */
+        }
+        /* 按钮和结果显示部分 */
+        .upload-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 15px; /* 缩短底部外边距 */
+        }
+        .upload-button:hover {
+            background-color: #0056b3;
+        }
+        .image-section {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .image-section img {
+            max-width: 100%;
+            max-height: 100%;
+            transform: rotate(90deg); /* 顺时针旋转90度 */
+            width: auto;
+            height: auto;
+            position: absolute;
+            left: -20px; /* 向左移动一些 */
+            margin-top: -30px;
+        }
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .input-row {
+            display: flex;
+            align-items: center;
+        }
+        .hotspot-temp-row {
+            display: flex;
+            align-items: center;
+            background-color:  #f1975b; 
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px; /* 保持与其他部分一致的顶部外边距 */
+            justify-content: space-between;
+        }
+        .hotspot-temp-row label {
+            margin-right: 10px; /* 增加标签与输入框之间的距离 */
+        }
+        .hotspot-temp-row input {
+            width: calc(100% - 120px); /* 缩短输入框宽度 */
+        }
+        .marker {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="title">变压器热点温度反演</h2>
+        <div class="content">
+            <div class="image-section">
+                <img id="transformer-image" src="transformer-model.jpg" alt="变压器模型">
+            </div>
+            <div class="form-section">
+                <div class="inline-group-container">
+                    <div class="form-group">
+                        <label>表面温度1</label>
+                        <input type="text" id="surface-temp-1">
+                        <span>℃</span>
+                    </div>
+                    <div class="form-group">
+                        <label>表面温度2</label>
+                        <input type="text" id="surface-temp-2">
+                        <span>℃</span>
+                    </div>
+                    <div class="form-group">
+                        <label>表面温度3</label>
+                        <input type="text" id="surface-temp-3">
+                        <span>℃</span>
+                    </div>
+                    <div class="form-group">
+                        <label>表面温度4</label>
+                        <input type="text" id="surface-temp-4">
+                        <span>℃</span>
+                    </div>
+                </div>
+                <div class="single-group-container">
+                    <div class="form-group">
+                        <label>A相电流</label>
+                        <input type="text" id="current-a">
+                        <span>A</span>
+                    </div>
+                    <div class="form-group">
+                        <label>B相电流</label>
+                        <input type="text" id="current-b">
+                        <span>A</span>
+                    </div>
+                    <div class="form-group">
+                        <label>C相电流</label>
+                        <input type="text" id="current-c">
+                        <span>A</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button class="upload-button" onclick="markHotspot()">反演热点温度</button>
+                </div>
+                <div class="hotspot-temp-row">
+                    <label>热点温度</label>
+                    <input type="text" id="hotspot-temp">
+                    <span>℃</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function createMarker(x, y) {
+            var marker = document.createElement('div');
+            marker.classList.add('marker');
+            marker.style.left = x + 'px';
+            marker.style.top = y + 'px';
+            document.body.appendChild(marker);
+        }
+
+        function convertCoordinatesToSystem1(x2, y2, rect) {
+            // 计算比例因子
+            var scaleX = (rect.right - rect.left) / 1184;
+            var scaleY = (rect.bottom - rect.top) / (702 - 345);
+
+            // 计算偏移量
+            var offsetX = rect.left - 0 * scaleX;
+            var offsetY = rect.top - 345 * scaleY;
+
+            // 转换坐标
+            var x1 = x2 * scaleX + offsetX;
+            var y1 = y2 * scaleY + offsetY;
+
+            return { x: x1, y: y1 };
+        }
+
+        function markHotspot() {
+            // 获取输入的表面温度和电流
+            var surfaceTemp1 = parseFloat(document.getElementById('surface-temp-1').value);
+            var surfaceTemp2 = parseFloat(document.getElementById('surface-temp-2').value);
+            var surfaceTemp3 = parseFloat(document.getElementById('surface-temp-3').value);
+            var surfaceTemp4 = parseFloat(document.getElementById('surface-temp-4').value);
+            var currentA = parseFloat(document.getElementById('current-a').value);
+            var currentB = parseFloat(document.getElementById('current-b').value);
+            var currentC = parseFloat(document.getElementById('current-c').value);
+
+            // 这里你可以使用输入的数据来计算热点温度
+            // 然后将计算的热点温度显示在表单中
+            // 这是一个示例计算，实际的计算方法需要根据具体的算法
+            var hotspotTemp = (surfaceTemp1 + surfaceTemp2 + surfaceTemp3 + surfaceTemp4) / 4;
+            document.getElementById('hotspot-temp').value = hotspotTemp.toFixed(2);
+
+            // 设置坐标系2中的坐标
+            var coords2 = [
+                { x: 0, y: 345 }
+            ];
+
+            var rect = document.getElementById('transformer-image').getBoundingClientRect();
+            var coords1 = coords2.map(coord => convertCoordinatesToSystem1(coord.x, coord.y, rect));
+
+            // 在图像上标记转换后的点
+            coords1.forEach(coord => createMarker(coord.x, coord.y));
+        }
+
+        window.onload = function() {
+            var container = document.querySelector('.container');
+            var image = document.getElementById('transformer-image');
+            var containerHeight = container.offsetHeight;
+            var containerWidth = container.offsetWidth;
+
+            if(containerWidth < containerHeight) {
+                image.style.maxHeight = (containerWidth - 25) + 'px'; // 设置图片最大高度比容器宽度小一点
+                image.style.width = 'auto';
+            } else {
+                image.style.maxWidth = (containerHeight - 25) + 'px'; // 设置图片最大宽度比容器高度小一点
+                image.style.height = 'auto';
+            }
+
+            // 调整图片旋转后的位置
+            if (image.style.transform === 'rotate(90deg)') {
+                image.style.marginTop = (containerHeight / 2 - image.offsetWidth / 2) + 'px';
+            }
+
+            // 获取图像四个角的坐标
+            var rect = image.getBoundingClientRect();
+            var topLeft = { x: rect.left, y: rect.top };
+            var topRight = { x: rect.right, y: rect.top };
+            var bottomLeft = { x: rect.left, y: rect.bottom };
+            var bottomRight = { x: rect.right, y: rect.bottom };
+
+            // 打印坐标到控制台
+            console.log("Top Left:", topLeft);
+            console.log("Top Right:", topRight);
+            console.log("Bottom Left:", bottomLeft);
+            console.log("Bottom Right:", bottomRight);
+        };
+    </script>
+</body>
+</html>
